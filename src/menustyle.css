@@ -1,0 +1,30 @@
+
+.root
+{
+	-fx-background-color: #313131;
+	
+}
+
+.button
+{
+	-fx-background-color: #525252;
+	-fx-font-family: serif;
+    -fx-font-size: 12pt;
+	-fx-text-fill: #FFFFFF;
+}
+
+.radio-button
+{
+	-fx-padding: 1px;
+	-fx-font-family: serif;
+    -fx-font-size: 12pt;
+	-fx-text-fill: #FFFFFF;
+}
+
+.label
+{
+	-fx-font-family: serif;
+    -fx-font-size: 12pt;
+	-fx-text-fill: #FFFFFF;
+}
+
