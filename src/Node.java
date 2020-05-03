@@ -1,141 +1,127 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.List;
 
-public class Node {	
-	public final int BOARD_SIZE = 8;
-	public char[][] state = new char[BOARD_SIZE][BOARD_SIZE];
-	public int evaluation;
-	public Queue<int[]> openPositions = new LinkedList<>();
-	public Stack<int[]> movesPlayed = new Stack<>();
-	public Node currentGame;
-	
-	public Node(char[][] game) {
-		for (int i = 0; i < BOARD_SIZE; ++i) {
-			for (int j = 0; j < BOARD_SIZE; ++j) {
-				state[i][j] = game[i][j];
-				if (game[i][j] == '-') {
-					openPositions.add(new int[] {i, j});
-				}
-			}
-		}
-		this.evaluation = evaluation(game);
-	}
-	
-	public int add(char player, int[] move) {
-		if (move.length != 2) {
-			return (Integer) null;
-		}
-		movesPlayed.push(move);
-//		System.out.println("Stack push test");
-		state[move[0]][move[1]] = player;
-		int eval = evaluation(state);
-		return eval;
-	}
-	
-	public int remove(char player, int[] move) {
-		if (move.length != 2) {
-			return (Integer) null;
-		}
-		state[move[0]][move[1]] = player;
-		int eval = evaluation(state);
-//		int[] toReset = movesPlayed.pop();
-//		state[toReset[0]][toReset[1]] = '-';
-		movesPlayed.push(move);
-		
-		return eval;
-	}
-	
-	public int evaluation(char[][] board) {
-		int eval = 0;
-		for (int i = 0; i < BOARD_SIZE - 3; ++i) {
-			for (int j = 0; j < BOARD_SIZE - 3; ++j) {
-				if (board[i][j] != '-') {
-					if (board[i][j] == board[i][j+1] && board[i][j] == board[i][j+2] && board[i][j]== board[i][j+3]) {
-						if (board[i][j] == 'X') {
-							return Integer.MAX_VALUE;
-						}
-						else {
-							return Integer.MIN_VALUE;
-						}
-					}
-					else if (board[i][j] == board[i][j+1] && board[i][j] == board[i][j+2]) {
-						if (board[i][j] == 'X') {
-							eval += 9;
-						}
-						else {
-							eval -= 9;
-						}
-						j += 2;
-					}
-					else if (board[i][j] == board[i][j+1]) {
-						if (board[i][j] == 'X') {
-							eval += 4;
-						}
-						else {
-							eval -= 4;
-						}
-						j += 1;
-					}
-					else {
-						if (board[i][j] == 'X') {
-							eval += 1;
-						}
-						else {
-							eval -= 1;
-						}
-					}
-					if (board[i][j] == board[i+1][j] && board[i][j] == board[i+2][j] && board[i][j] == board[i+3][j]) {
-						if (board[i][j] == 'X') {
-							return Integer.MAX_VALUE;
-						}
-						else {
-							return Integer.MIN_VALUE;
-						}
-					}
-					else if (board[i][j] == board[i+1][j] && board[i][j] == board[i+2][j]) {
-						if (board[i][j] == 'X') {
-							eval += 9;
-						}
-						else {
-							eval -= 9;
-						}
-						i += 2;
-					}
-					else if (board[i][j] == board[i+1][j]) {
-						if (board[i][j] == 'X') {
-							eval += 4;
-						}
-						else {
-							eval -= 4;
-						}
-						i += 1;
-					}
-					else {
-						if (board[i][j] == 'X') {
-							eval += 1;
-						}
-						else {
-							eval -= 1;
-						}
-					}
-				}
-			}
-		}
-		return eval;
-	}
-	
-	private boolean compareArrays(int[] arr1, int[] arr2) {
-		if (arr1.length == arr2.length) {
-			for (int i = 0; i < arr1.length; ++i) {
-				if (arr1[i] != arr2[i]) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-	
+public class Node {
+
+    public static final int SIZE = 8;
+    private int[][] board;
+    private int currentMark;
+    private String boardOutput = null;
+
+    public Node( boolean playerTurn ){
+        board = new int[SIZE][SIZE];
+        this.currentMark = playerTurn ? 2 : 1;
+    }
+
+    private Node(int[][] newGrid, int mark) {
+        if ( newGrid.length != SIZE || newGrid[0].length != SIZE ){
+            throw new RuntimeException("Invalid grid size.");
+        }
+        currentMark = mark;
+        board = newGrid;
+    }
+
+    public Node mark( String coordinate ){
+        if ( coordinate.length() != 2 || !Character.isAlphabetic(coordinate.charAt(0))
+                || !Character.isDigit(coordinate.charAt(1)) ){
+            return null;
+        }
+        else {
+            return mark( Character.toUpperCase(coordinate.charAt(0))-65, Integer.parseInt("" + coordinate.charAt(1))-1);
+        }
+    }
+
+    private Node mark( int row, int col ){
+        if ( board[row][col] != 0 ){
+            return null;
+        }
+        else {
+            int[][] newGrid = board.clone();
+            for ( int i = 0; i < SIZE; i++){
+                newGrid[i] = board[i].clone();
+            }
+            newGrid[row][col] = currentMark;
+            int newMark = currentMark%2+1;
+            return new Node(newGrid, newMark);
+        }
+    }
+
+    public List<Node> getSuccessors(){
+        List<Node> successors = new ArrayList<Node>();
+        for ( int row = 0; row < SIZE; row++ ){
+            for ( int col = 0; col < SIZE; col++ ){
+                if ( board[row][col] == 0 ){
+                    successors.add(this.mark(row, col));
+                }
+            }
+        }
+        return successors;
+    }
+
+    public boolean terminalTest(){
+        for ( int row = 0; row < SIZE; row++){
+            int counter = 1;
+            int mark = board[row][0];
+            for ( int col = 1; col < SIZE; col++ ){
+                if ( board[row][col] == mark ){
+                    counter++;
+                } else {
+                    mark = board[row][col];
+                    counter = 1;
+                }
+                if ( mark != 0 && counter >= 4 ){
+                    return true;
+                }
+            }
+        }
+
+        for ( int col = 0; col < SIZE; col++ ){
+            int counter = 1;
+            int mark = board[0][col];
+            for ( int row = 1; row < SIZE; row++ ){
+                if ( board[row][col] == mark ){
+                    counter++;
+                } else {
+                    mark = board[row][col];
+                    counter = 1;
+                }
+                if ( mark != 0 && counter >= 4 ){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString(){
+        if ( boardOutput == null ){
+            StringBuilder sb = new StringBuilder();
+            sb.append("   ");
+            for ( int i = 1; i <= SIZE; i++){
+                sb.append(i + "  ");
+            }
+            sb.append("\n");
+            for (int letter = 65, i = 0; i < SIZE; i++,letter++){
+                sb.append((char)letter + " ");
+                for ( int j = 0; j < SIZE; j++ ){
+                    if ( board[i][j] == 0 ){
+                        sb.append(" - ");
+                    } else if ( board[i][j] == 1 ){
+                        sb.append(" X " );
+                    } else if ( board[i][j] == 2 ){
+                        sb.append(" O " );
+                    }
+                }
+                sb.append("\n");
+            }
+            boardOutput = sb.toString();
+        }
+        return boardOutput;
+    }
+
+    public int[][] getState() {
+        return board;
+    }
+
 }
