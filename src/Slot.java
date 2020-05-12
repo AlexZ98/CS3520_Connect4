@@ -1,5 +1,5 @@
 import javafx.scene.layout.Pane;
-
+//Slot class that represents each position on the board in the GUI, methods are self-explanatory.
 public class Slot extends Pane
 {
 	public boolean playerSlot;
