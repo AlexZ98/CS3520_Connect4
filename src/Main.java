@@ -23,6 +23,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
+//Main function that runs the game GUI and simulates the AI.
 public class Main extends Application 
 {
 	private static AlphaBetaPruning ai;
