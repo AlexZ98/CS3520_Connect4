@@ -1,6 +1,8 @@
 import java.util.List;
 
 public class AlphaBetaPruning {
+    //Making a move produces a new node that represents the state after the move has been made.
+    //Move is determined by minimax algorithm looking through the tree to see what best possible move is based on evaluation score.
     public CustomNode makeMove( CustomNode initialState, int timeOut){
         long startTime = System.currentTimeMillis();
         long totalTime = 0;
@@ -14,7 +16,7 @@ public class AlphaBetaPruning {
        // System.out.println("Look Ahead Depth: " + (maxDepth-1));
         return bestMove;
     }
-
+    //Minimax algorithm that searches through decision tree to see what best possible move is based on possible board states generated after each move
     private CustomNode minimax(CustomNode initialState, int maxDepth, long startTime, int timeOut) {
         int maxValue = Integer.MIN_VALUE;
         CustomNode mostBestState = null;
@@ -29,7 +31,7 @@ public class AlphaBetaPruning {
         }
         return mostBestState;
     }
-
+    //Max function that returns the best evaluation for a move for the maximizing player
     private int max(CustomNode state, int alpha, int beta, int depthRemaining, long startTime, int timeOut){
         boolean cutOff = System.currentTimeMillis()-startTime > timeOut;
         if ( depthRemaining == 0 || cutOff || state.terminalTest() ){
@@ -49,7 +51,7 @@ public class AlphaBetaPruning {
             return maxValue;
         }
     }
-
+    //Minimizing function that returns best evaluation for a move for the minimizing player
     private int min(CustomNode state, int alpha, int beta, int depthRemaining, long startTime, int timeOut ){
         boolean cutOff = System.currentTimeMillis()-startTime > timeOut;
         if ( depthRemaining == 0 || cutOff || state.terminalTest() ){
@@ -69,7 +71,7 @@ public class AlphaBetaPruning {
             return minValue;
         }
     }
-
+    //Function to give an integer evaluation (weight/score) for a given state, this score is used in minimax to find the best move for maximizing/minimizing player.
     public int evaluateState(CustomNode state) {
         int SIZE = CustomNode.SIZE;
         int[][] grid = state.getState();
@@ -185,7 +187,7 @@ public class AlphaBetaPruning {
                 - 10*scores[1][0] - 20*scores[1][1] - 50*scores[1][2] - 150*scores[1][3];
         return evaluationScore;
     }
-
+    //helper function for evaluation function.
     private int decisionPatterns( int pos1, int pos2, int pos3, int pos4) {
         int eval = 0;
         if(pos1 == 0 && pos4 == 1 && pos1 == 1 && pos4 == 0)
