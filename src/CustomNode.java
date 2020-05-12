@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
-
+//Node class that represents the game board and thus its state.
 public class CustomNode {
 
     public static final int SIZE = 8;
@@ -9,7 +9,7 @@ public class CustomNode {
     private String boardOutput = null;
     private int col;
 	private int row;
-
+	//Constructors
     public CustomNode( boolean playerTurn ){
         board = new int[SIZE][SIZE];
         this.currentMark = playerTurn ? 2 : 1;
@@ -23,7 +23,7 @@ public class CustomNode {
         board = newGrid;
     }
 
-
+	//Method to "mark" a spot on the board to indicate that it isn't empty.
     public CustomNode mark( int row, int col ){
         if ( board[row][col] != 0 ){
             return null;
@@ -53,7 +53,7 @@ public class CustomNode {
         }
         return successors;
     }
-
+	//Boolean method that checks board for a winning state to see if the game is over.
     public boolean terminalTest(){
         for ( int row = 0; row < SIZE; row++){
             int counter = 1;
